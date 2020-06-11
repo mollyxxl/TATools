@@ -108,6 +108,11 @@ public class UIGammaToLinear
                         var richText = meshText.richText;
                         var obj = meshText.gameObject;
                         GameObject.DestroyImmediate(meshText);
+                        if (obj.GetComponent<UnityEngine.UI.Text>() != null)
+                        {
+                            Debug.LogError("已经存在Text 组件，请手动查看是否需要添加" + assetPath);
+                            continue;
+                        }
                         var tx = obj.AddComponent<UnityEngine.UI.Text>();
                         tx.text = msg;
                         tx.font = font;
