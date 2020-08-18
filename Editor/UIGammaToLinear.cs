@@ -328,4 +328,51 @@ public class UIGammaToLinear
         EditorUtility.ClearProgressBar();
         Debug.Log("完成");
     }
+    [MenuItem("XXL/Prefab/Change HIGraphicRaycaster")]
+    public static void ChangeHIGraphicRaycaster()
+    {
+        try
+        {
+            var sele = Selection.objects;
+            for (int i = 0; i < sele.Length; i++)
+            {
+                var assetPath = AssetDatabase.GetAssetPath(sele[i]);
+                EditorUtility.DisplayProgressBar("Hold On...", assetPath, (i + 1) * 1f / sele.Length);
+                GameObject instanceObj = PrefabUtility.LoadPrefabContents(assetPath);
+                var raycas = instanceObj.GetComponentsInChildren<UnityEngine.UI.GraphicRaycaster>(true);
+
+                foreach (var ray in raycas)
+                {
+                    var obj = ray.gameObject;
+                    GameObject.DestroyImmediate(ray);
+                    obj.AddComponent<HIGraphicRaycaster>();
+                }
+                PrefabUtility.SaveAsPrefabAsset(instanceObj, assetPath);
+                PrefabUtility.UnloadPrefabContents(instanceObj);
+            }
+
+            EditorUtility.ClearProgressBar();
+            Debug.Log("完成");
+        }
+        catch (System.Exception e)
+        {
+            Debug.Log(e.ToString());
+        }
+
+    }
+    [MenuItem("XXL/UI/Texture SRGB Checked")]
+    public static void CheckedTextureSRGB()
+    {
+        var models = AssetDatabase.FindAssets("t:Texture", new string[] { "Assets/Res/Gui/Share/BigTexture/Icon_Achievement" });
+        for (int i = 0; i < models.Length; i++)
+        {
+            var pref = models[i];
+            var assetPath = AssetDatabase.GUIDToAssetPath(pref);
+            EditorUtility.DisplayProgressBar("Hold On...", assetPath, (i + 1) * 1f / models.Length);
+            AssetDatabase.ImportAsset(assetPath, ImportAssetOptions.ForceUpdate);
+        }
+        AssetDatabase.Refresh();
+        EditorUtility.ClearProgressBar();
+        Debug.Log("完成");
+    }
 }
